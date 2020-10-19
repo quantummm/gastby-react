@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from '../component/Header/Header';
+import Tabadmin from '../component/Tab/Tab';
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -24,8 +25,7 @@ export default function Home() {
         <Header />
       </div>
       <div className={classes.root}>
-        {/* <Tabadmin /> */}
-        Welcome
+        <Tabadmin />
       </div>
     </React.Fragment>
   );
