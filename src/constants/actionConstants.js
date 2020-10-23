@@ -1,3 +1,0 @@
-export const CURRENT_USER = 'CURRENT_USER';
-export const BRAND_NAME = 'BRAND_NAME';
-export const CHANGE_USERNAME = 'CHANGE_USERNAME';

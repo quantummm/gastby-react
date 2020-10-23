@@ -12,11 +12,16 @@ import {
   OutlinedInput,
   FormControlLabel,
   Checkbox,
-  Hidden,
+  // Hidden,
+  // Snackbar,
+  Collapse,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import purple from '@material-ui/core/colors/purple';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import myContext from '../../createContext';
+import { useDispatch } from 'react-redux';
+import { LOGIN_REQUEST } from '../../store/actions/index';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -65,20 +70,47 @@ const useStyles = makeStyles((theme) => ({
 
 function LoginForm() {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const value = useContext(myContext);
+  // eslint-disable-next-line no-unused-vars
   const [submitError, setSubmitError] = useState(false);
   const [names, setNames] = useState('');
+  const [nameError, setNameError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+
   const [values, setValues] = useState({
     password: '',
     showPassword: false,
   });
-  const onClickSignin = () => {
+
+  const login = (username, password) =>
+    dispatch({
+      type: LOGIN_REQUEST,
+      username,
+      password,
+    });
+
+  const onClickSignin = (e) => {
     // if (names == '' || values.password == '') {
     //   alert('Please fill in the field');
     // }
+    setPasswordError(false);
+    setNameError(false);
+    if (names === '') {
+      setNameError(true);
+    }
+
+    if (values.password === '') {
+      setPasswordError(true);
+    }
     setSubmitError(false);
     if (names === '') {
-      setSubmitError(true);
+      return setSubmitError(true);
+    }
+
+    e.preventDefault();
+    if (names && values.password) {
+      login(names, values.password);
     }
   };
 
@@ -93,6 +125,14 @@ function LoginForm() {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  // const handleClose = (event, reason) => {
+  //   if (reason === 'clickaway') {
+  //     return;
+  //   }
+
+  //   setSubmitError(false);
+  // };
 
   const userNameChange = (e) => {
     setNames(e.target.value);
@@ -119,16 +159,28 @@ function LoginForm() {
               variant="outlined"
               margin="normal"
               value={names}
-              error={submitError}
+              //error={submitError}
               onChange={userNameChange}
-              helperText={submitError ? 'Required' : Hidden}
+              // helperText={submitError ? 'Required' : Hidden}
               required
               fullWidth
             />
+            <Collapse in={nameError}>
+              <Alert
+                onClose={() => {
+                  setNameError(false);
+                }}
+                severity="error"
+              >
+                Required username
+              </Alert>
+            </Collapse>
+
             <FormControl variant="outlined" required fullWidth margin="normal">
               <InputLabel htmlFor="outlined-adornment-password">
                 Password
               </InputLabel>
+
               <OutlinedInput
                 id="outlined-adornment-password"
                 type={values.showPassword ? 'text' : 'password'}
@@ -170,10 +222,31 @@ function LoginForm() {
               />
             </FormControl>
 
+            <Collapse in={passwordError}>
+              <Alert
+                onClose={() => {
+                  setPasswordError(false);
+                }}
+                severity="error"
+              >
+                Required password
+              </Alert>
+            </Collapse>
+
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
+
+            {/* <Snackbar
+              open={submitError}
+              autoHideDuration={3000}
+              onClose={handleClose}
+            >
+              <Alert onClose={handleClose} severity="error">
+                Required username and password
+              </Alert>
+            </Snackbar> */}
 
             <Button
               type="submit"
