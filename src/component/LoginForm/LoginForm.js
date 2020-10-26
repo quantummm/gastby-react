@@ -13,8 +13,9 @@ import {
   FormControlLabel,
   Checkbox,
   // Hidden,
-  // Snackbar,
-  Collapse,
+  Snackbar,
+  Portal,
+  // Collapse,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import purple from '@material-ui/core/colors/purple';
@@ -72,11 +73,9 @@ function LoginForm() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const value = useContext(myContext);
-  // eslint-disable-next-line no-unused-vars
   const [submitError, setSubmitError] = useState(false);
   const [names, setNames] = useState('');
-  const [nameError, setNameError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [values, setValues] = useState({
     password: '',
@@ -91,24 +90,21 @@ function LoginForm() {
     });
 
   const onClickSignin = (e) => {
-    // if (names == '' || values.password == '') {
-    //   alert('Please fill in the field');
-    // }
-    setPasswordError(false);
-    setNameError(false);
-    if (names === '') {
-      setNameError(true);
-    }
+    e.preventDefault();
 
-    if (values.password === '') {
-      setPasswordError(true);
-    }
     setSubmitError(false);
-    if (names === '') {
+
+    if (names === '' && values.password === '') {
+      setErrorMessage('Require username and password');
+      return setSubmitError(true);
+    } else if (values.password === '') {
+      setErrorMessage('Require password');
+      return setSubmitError(true);
+    } else if (names === '') {
+      setErrorMessage('Require username');
       return setSubmitError(true);
     }
 
-    e.preventDefault();
     if (names && values.password) {
       login(names, values.password);
     }
@@ -126,13 +122,13 @@ function LoginForm() {
     event.preventDefault();
   };
 
-  // const handleClose = (event, reason) => {
-  //   if (reason === 'clickaway') {
-  //     return;
-  //   }
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
 
-  //   setSubmitError(false);
-  // };
+    setSubmitError(false);
+  };
 
   const userNameChange = (e) => {
     setNames(e.target.value);
@@ -159,22 +155,10 @@ function LoginForm() {
               variant="outlined"
               margin="normal"
               value={names}
-              //error={submitError}
               onChange={userNameChange}
-              // helperText={submitError ? 'Required' : Hidden}
               required
               fullWidth
             />
-            <Collapse in={nameError}>
-              <Alert
-                onClose={() => {
-                  setNameError(false);
-                }}
-                severity="error"
-              >
-                Required username
-              </Alert>
-            </Collapse>
 
             <FormControl variant="outlined" required fullWidth margin="normal">
               <InputLabel htmlFor="outlined-adornment-password">
@@ -222,31 +206,21 @@ function LoginForm() {
               />
             </FormControl>
 
-            <Collapse in={passwordError}>
-              <Alert
-                onClose={() => {
-                  setPasswordError(false);
-                }}
-                severity="error"
-              >
-                Required password
-              </Alert>
-            </Collapse>
-
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-
-            {/* <Snackbar
-              open={submitError}
-              autoHideDuration={3000}
-              onClose={handleClose}
-            >
-              <Alert onClose={handleClose} severity="error">
-                Required username and password
-              </Alert>
-            </Snackbar> */}
+            <Portal>
+              <Snackbar
+                open={submitError}
+                autoHideDuration={3000}
+                onClose={handleClose}
+              >
+                <Alert onClose={handleClose} severity="error">
+                  {errorMessage}
+                </Alert>
+              </Snackbar>
+            </Portal>
 
             <Button
               type="submit"
@@ -263,7 +237,7 @@ function LoginForm() {
                   : classes.adminButton
               }`}
             >
-              Sign in
+              Sign In
             </Button>
           </form>
         </div>
