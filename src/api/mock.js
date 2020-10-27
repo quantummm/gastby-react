@@ -5,10 +5,7 @@ import MockAdapter from 'axios-mock-adapter';
 const mock = new MockAdapter(axios);
 
 mock.onPost('/api/login').reply((req) => {
-  //const { username, password } = JSON.parse(req.data);
   return new Promise((resolve, reject) => {
-    //let user = null;
-
     let response;
 
     const matchedResponse = JSON.parse(req.data);
@@ -39,24 +36,5 @@ mock.onPost('/api/login').reply((req) => {
     }, Math.floor(200 + Math.random() * 800));
   });
 });
-
-//     setTimeout(() => {
-//       let hasUser = LoginUser.some((userItem) => {
-//         if (userItem.username === username && userItem.password === password) {
-//           user = JSON.parse(JSON.stringify(userItem));
-//           //user.password = undefined;
-//           return true;
-//         }
-//       });
-//       console.log(user);
-
-//       if (hasUser) {
-//         resolve([200, { code: 200, msg: 'Success', user }]);
-//       } else {
-//         resolve([500, { code: 500, msg: 'Fail' }]);
-//       }
-//     }, 1000);
-//   });
-// });
 
 export { axios, mock };

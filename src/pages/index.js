@@ -20,13 +20,13 @@ export default function Home() {
   const classes = useStyles();
 
   return (
-    <React.Fragment>
+    <>
       <div>
         <Header />
       </div>
       <div className={classes.root}>
         <Tabadmin />
       </div>
-    </React.Fragment>
+    </>
   );
 }
